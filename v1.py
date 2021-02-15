@@ -287,7 +287,7 @@ if __name__ == "__main__":#This is the main bit and this is where the actual gam
     PlayAgain = input("Do you want to play again (enter Y for Yes)? ")#checks if you want to play again
     if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:#checking to see if your using y or not
       PlayAgain = chr(ord(PlayAgain) - 32)
-
+'''
 # Skeleton Program code for the AQA COMP1 Summer 2015 examination
 # this code should be used in conjunction with the Preliminary Material
 # written by the AQA COMP1 Programmer Team
@@ -509,17 +509,7 @@ def GetPositions(StartSquare, FinishSquare):
   FinishFile = FinishSquare // 10
   return StartRank,StartFile,FinishRank,FinishFile
 
-def ValidateBoard(StartFile, StartRank, FinishFile, FinishRank):
-  count = 0
-  if StartFile >= BOARDDIMENSION and StartRank>= BOARDDIMENSION:
-    count += 1
-    print("Out of range")
-  if FinishFile >= BOARDDIMENSION and FinishRank >= BOARDDIMENSION:
-    count += 1
-    print("out of range")  
-  if count <= 2 :
-    return StartFile, StartRank, FinishFile, FinishRank
-  
+            
   
 def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
   destinationPeice = Board[FinishRank][FinishFile] #Storing the position of the previous piece that is there
@@ -536,7 +526,15 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
     if destinationPeice != "  ":#If there is no space to where your going to move to then print destination piece
       print("Captured! ", destinationPeice)
 
-    
+
+def CheckMoveIsValid (StartRank, StartFile, FinishFile,FinishRank):
+    if BOARDDIMENSION < FinishFile or  BOARDDIMENSION < FinishRank or  BOARDDIMENSION < StartRank or  BOARDDIMENSION < StartFile:
+        print("This move is not valid.")
+        return False
+    else:
+        print("This is a valid move.", StartRank, StartFile, FinishFile,FinishRank, BOARDDIMENSION)
+        return True
+
 if __name__ == "__main__":
   Board = CreateBoard() 
   StartSquare = 0 
@@ -548,49 +546,30 @@ if __name__ == "__main__":
     SampleGame = GetTypeOfGame()
     InitialiseBoard(Board, SampleGame)
     while not(GameOver):
-      DisplayBoard(Board)
-      DisplayWhoseTurnItIs(WhoseTurn)
-      MoveIsLegal = False
-      while not(MoveIsLegal):
-        StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
-        StartRank,StartFile,FinishRank,FinishFile  = GetPositions(StartSquare,FinishSquare)
-        MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
-        if not(MoveIsLegal):
-          print("That is not a legal move - please try again")
-      ValidateBoard(StartFile, StartRank, FinishFile, FinishRank)
-      GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
-      MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
-      if GameOver:
-        DisplayWinner(WhoseTurn)
-      if WhoseTurn == "W":
-        WhoseTurn = "B"
-      else:
-        WhoseTurn = "W"
+        DisplayBoard(Board)
+        DisplayWhoseTurnItIs(WhoseTurn)
+        MoveIsLegal = False
+        MoveIsValid = False
+        while not(MoveIsValid) or not(MoveIsLegal):#this is looping through move is valid and legal until both conditions are meet
+            StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
+            StartRank,StartFile,FinishRank,FinishFile  = GetPositions(StartSquare,FinishSquare)
+            print("Checking move is valid...")
+            MoveIsValid = CheckMoveIsValid(StartRank, StartFile, FinishFile,FinishRank)
+            if MoveIsValid == True:#this is saying that if the move is valid then check if it is legal
+                MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+                if not(MoveIsLegal):
+                    print("That is not a legal move - please try again")
+        GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
+        MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+        if GameOver:
+          DisplayWinner(WhoseTurn)
+        if WhoseTurn == "W":
+          WhoseTurn = "B"
+        else:
+          WhoseTurn = "W"
     PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
     if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
       PlayAgain = chr(ord(PlayAgain) - 32)
 
 
 
-def numpow(num1,power):
-  if power == 1:
-    return num1*power#when you take this out it runs in an infinite loop 
-  else:
-    return num1 * numpow(num1, power-1)
-print(numpow(2,5))
-
-num=int(input("input a number"))
-
-
-
-def factorial(num):
-  y=num-1
-  if num == 1:
-    return num
-  else:
-    return num*factorial(num-1)
-
-
-
-print(factorial(num))
-'''
