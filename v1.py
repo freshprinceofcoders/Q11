@@ -2,6 +2,7 @@
 # this code should be used in conjunction with the Preliminary Material
 # written by the AQA COMP1 Programmer Team
 # developed in the Python 3.4 programming environment
+import csv
 
 BOARDDIMENSION = 8
 
@@ -232,7 +233,7 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
   else:
     Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
     Board[StartRank][StartFile] = "  "
-    
+
     if destinationPeice != "  ":#If there is no space to where your going to move to then print destination piece
       print("Captured! ", destinationPeice)
 
@@ -244,6 +245,17 @@ def CheckMoveIsValid (StartRank, StartFile, FinishFile,FinishRank):
     else:
         print("This is a valid move.", StartRank, StartFile, FinishFile,FinishRank, BOARDDIMENSION)
         return True
+
+def SaveGame(Board):
+  with open ("test.csv","a") as filedata:
+    writer = csv.DictWriter(filedata, delimiter=',', fieldnames=['1','2','3','4','5','6','7','8','9'])
+    for row in Board:
+      newRow = {}
+      print('This is the row', row)
+      for i in range(1,9):
+        newRow[str(i)] = row[i]
+      print('newRow', newRow)
+      writer.writerow(newRow)
 
 if __name__ == "__main__":
   Board = CreateBoard() 
@@ -262,6 +274,9 @@ if __name__ == "__main__":
         MoveIsValid = False
         while not(MoveIsValid) or not(MoveIsLegal):#this is looping through move is valid and legal until both conditions are meet
             StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
+            if StartSquare == -1:
+              print("bord", Board)
+              SaveGame(Board)
             StartRank,StartFile,FinishRank,FinishFile  = GetPositions(StartSquare,FinishSquare)
             print("Checking move is valid...")
             MoveIsValid = CheckMoveIsValid(StartRank, StartFile, FinishFile,FinishRank)
