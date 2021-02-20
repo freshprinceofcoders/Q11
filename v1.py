@@ -21,14 +21,10 @@ def DisplayWhoseTurnItIs(WhoseTurn):
     print("It is Black's turn")
 
 def GetTypeOfGame():
-  SampleGame = input("Do you want to play the sample game (enter Y for Yes)? ")#asks if you want to play sample game
-  if ord(SampleGame) >= 97 and ord(SampleGame) <= 122:#This checks to see if the letter is Y and if it is not then it returns no sample board
+  SampleGame = input("Do you want to play the sample game (enter Y for Yes, L/l for Loading saved game.)? ")
+  if ord(SampleGame) >= 97 and ord(SampleGame) <= 122:
     SampleGame = chr(ord(SampleGame) - 32)
-  return SampleGame#you need to return it
-
-def GetTypeOfGame():
-  TypeOfGame = input("Do you want to play the sample game (enter Y for Yes)? ")
-  return TypeOfGame
+  return SampleGame
 
 def DisplayWinner(WhoseTurn):
   if WhoseTurn == "W":
@@ -164,49 +160,62 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
         MoveIsLegal = CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
   return MoveIsLegal
 
+def GetSavedGame():
+  board = []
+  with open('C:/Users/milan/OneDrive/Desktop/project euler/Q11/test.csv', newline='') as csvfile:
+    spamreader = csv.reader(csvfile, delimiter=',')
+    for row in spamreader:
+      board.append(row)
+  return board 
+  # return [[' ', ' ', '', '', '', '', '', ''], ['', 'BG', 'BE', 'BN', 'BS', 'BM', 'BN', 'BE'], ['', 'BR', 'BR', 'BR', 'BR', 'BR', 'BR', 'BR'], ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', ''], ['', 'WR', 'WR', 'WR', 'WR', 'WR', 'WR', 'WR'], ['', 'WG', 'WE', 'WN', 'WM', 'WS', 'WN', 'WE'], ['W', '', '', '', '', '', '', '']]
+
 def InitialiseBoard(Board, SampleGame):
-  if SampleGame == "Y":
-    for RankNo in range(1, BOARDDIMENSION + 1):
-      for FileNo in range(1, BOARDDIMENSION + 1):#this makes the board for the sample
-        Board[RankNo][FileNo] = "  "
-    Board[1][2] = "BG"
-    Board[1][4] = "BS"
-    Board[1][8] = "WG" # this is settiing out where the piecies start on the board 
-    Board[2][1] = "WR"
-    Board[3][1] = "WS"
-    Board[3][2] = "BE"
-    Board[3][8] = "BE"
-    Board[6][8] = "BR"
+  if SampleGame == "L" or SampleGame == "l":
+    Board = GetSavedGame()
+    print(Board)
   else:
-    for RankNo in range(1, BOARDDIMENSION + 1):
-      for FileNo in range(1, BOARDDIMENSION + 1):
-        if RankNo == 2:
-          Board[RankNo][FileNo] = "BR"
-        elif RankNo == 7:
-          Board[RankNo][FileNo] = "WR"
-        elif RankNo == 1 or RankNo == 8:
-          if RankNo == 1:
-            Board[RankNo][FileNo] = "B"
-          if RankNo == 8:
-            Board[RankNo][FileNo] = "W"
-          if FileNo == 1 or FileNo == 8:#This is the cooridinates that needs a letter added to 
-            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "G"#this is adding the "G" to the coordinates on the board and adding the letter G  next to the letter B or W
-          elif FileNo == 2 or FileNo == 7:
-            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "E"
-          elif FileNo == 3 or FileNo == 6:
-            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "N"
-          elif FileNo == 4:# There is one here as there is onlyone position to put it in
+    if SampleGame == "Y":
+      for RankNo in range(1, BOARDDIMENSION + 1):
+        for FileNo in range(1, BOARDDIMENSION + 1):#this makes the board for the sample
+          Board[RankNo][FileNo] = "  "
+      Board[1][2] = "BG"
+      Board[1][4] = "BS"
+      Board[1][8] = "WG" # this is settiing out where the piecies start on the board 
+      Board[2][1] = "WR"
+      Board[3][1] = "WS"
+      Board[3][2] = "BE"
+      Board[3][8] = "BE"
+      Board[6][8] = "BR"
+    else:
+      for RankNo in range(1, BOARDDIMENSION + 1):
+        for FileNo in range(1, BOARDDIMENSION + 1):
+          if RankNo == 2:
+            Board[RankNo][FileNo] = "BR"
+          elif RankNo == 7:
+            Board[RankNo][FileNo] = "WR"
+          elif RankNo == 1 or RankNo == 8:
             if RankNo == 1:
-              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
-            else:
-              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
-          elif FileNo == 5:
-            if RankNo ==1:#this is black 
-              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"#this makes it m if it is black 
-            else:
-              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"#else leaves it
-        else:
-          Board[RankNo][FileNo] = "  "    
+              Board[RankNo][FileNo] = "B"
+            if RankNo == 8:
+              Board[RankNo][FileNo] = "W"
+            if FileNo == 1 or FileNo == 8:#This is the cooridinates that needs a letter added to 
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "G"#this is adding the "G" to the coordinates on the board and adding the letter G  next to the letter B or W
+            elif FileNo == 2 or FileNo == 7:
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "E"
+            elif FileNo == 3 or FileNo == 6:
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "N"
+            elif FileNo == 4:# There is one here as there is onlyone position to put it in
+              if RankNo == 1:
+                Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
+              else:
+                Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
+            elif FileNo == 5:
+              if RankNo ==1:#this is black 
+                Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"#this makes it m if it is black 
+              else:
+                Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"#else leaves it
+          else:
+            Board[RankNo][FileNo] = "  "    
                     
 def GetMove(StartSquare, FinishSquare):
   StartSquare = int(input("Enter coordinates of square containing piece to move (file first): "))
@@ -246,20 +255,17 @@ def CheckMoveIsValid (StartRank, StartFile, FinishFile,FinishRank):
         print("This is a valid move.", StartRank, StartFile, FinishFile,FinishRank, BOARDDIMENSION)
         return True
 
-def SaveGame(Board):
+def SaveGame(Board, WhoseTurn):
   with open ("C:/Users/milan/OneDrive/Desktop/project euler/Q11/test.csv","w", newline='') as filedata:
-    writer = csv.DictWriter(filedata, skipinitialspace=True, delimiter=',', fieldnames=['1','2','3','4','5','6','7','8','9']) 
-    ignoredFirstRow = False
+    writer = csv.DictWriter(filedata, skipinitialspace=True, delimiter=',', fieldnames=['0', '1','2','3','4','5','6','7','8']) 
     for row in Board: 
-      if ignoredFirstRow == False:
-        ignoredFirstRow = True
-        continue
       newRow = {}
-      print('This is the row', row)
-      for i in range(1,9):
+      for i in range(0,8):
         newRow[str(i)] = row[i]
-      print('newRow', newRow)
       writer.writerow(newRow)
+    writer.writerow({ '0': WhoseTurn })
+
+ 
 
 if __name__ == "__main__":
   Board = CreateBoard() 
@@ -280,7 +286,7 @@ if __name__ == "__main__":
             StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
             if StartSquare == -1:
               print("bord", Board)
-              SaveGame(Board)
+              SaveGame(Board,WhoseTurn)
             StartRank,StartFile,FinishRank,FinishFile  = GetPositions(StartSquare,FinishSquare)
             print("Checking move is valid...")
             MoveIsValid = CheckMoveIsValid(StartRank, StartFile, FinishFile,FinishRank)
