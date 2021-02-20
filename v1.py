@@ -247,9 +247,13 @@ def CheckMoveIsValid (StartRank, StartFile, FinishFile,FinishRank):
         return True
 
 def SaveGame(Board):
-  with open ("test.csv","a") as filedata:
-    writer = csv.DictWriter(filedata, delimiter=',', fieldnames=['1','2','3','4','5','6','7','8','9'])
-    for row in Board:
+  with open ("C:/Users/milan/OneDrive/Desktop/project euler/Q11/test.csv","w", newline='') as filedata:
+    writer = csv.DictWriter(filedata, skipinitialspace=True, delimiter=',', fieldnames=['1','2','3','4','5','6','7','8','9']) 
+    ignoredFirstRow = False
+    for row in Board: 
+      if ignoredFirstRow == False:
+        ignoredFirstRow = True
+        continue
       newRow = {}
       print('This is the row', row)
       for i in range(1,9):
