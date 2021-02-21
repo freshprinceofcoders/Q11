@@ -165,14 +165,14 @@ def GetSavedGame():
   with open('C:/Users/milan/OneDrive/Desktop/project euler/Q11/test.csv', newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',')
     for row in spamreader:
+      del row[-1]      
       board.append(row)
-  return board 
-  # return [[' ', ' ', '', '', '', '', '', ''], ['', 'BG', 'BE', 'BN', 'BS', 'BM', 'BN', 'BE'], ['', 'BR', 'BR', 'BR', 'BR', 'BR', 'BR', 'BR'], ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', ''], ['', 'WR', 'WR', 'WR', 'WR', 'WR', 'WR', 'WR'], ['', 'WG', 'WE', 'WN', 'WM', 'WS', 'WN', 'WE'], ['W', '', '', '', '', '', '', '']]
+    del board[-1]
+  return board
 
 def InitialiseBoard(Board, SampleGame):
   if SampleGame == "L" or SampleGame == "l":
-    Board = GetSavedGame()
-    print(Board)
+    return GetSavedGame()
   else:
     if SampleGame == "Y":
       for RankNo in range(1, BOARDDIMENSION + 1):
@@ -216,7 +216,8 @@ def InitialiseBoard(Board, SampleGame):
                 Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"#else leaves it
           else:
             Board[RankNo][FileNo] = "  "    
-                    
+  return Board
+
 def GetMove(StartSquare, FinishSquare):
   StartSquare = int(input("Enter coordinates of square containing piece to move (file first): "))
   FinishSquare = int(input("Enter coordinates of square to move piece to (file first): "))
@@ -229,8 +230,6 @@ def GetPositions(StartSquare, FinishSquare):
   FinishFile = FinishSquare // 10
   return StartRank,StartFile,FinishRank,FinishFile
 
-            
-  
 def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
   destinationPeice = Board[FinishRank][FinishFile] #Storing the position of the previous piece that is there
   if WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
@@ -246,7 +245,6 @@ def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
     if destinationPeice != "  ":#If there is no space to where your going to move to then print destination piece
       print("Captured! ", destinationPeice)
 
-
 def CheckMoveIsValid (StartRank, StartFile, FinishFile,FinishRank):
     if BOARDDIMENSION < FinishFile or  BOARDDIMENSION < FinishRank or  BOARDDIMENSION < StartRank or  BOARDDIMENSION < StartFile:
         print("This move is not valid.")
@@ -257,15 +255,15 @@ def CheckMoveIsValid (StartRank, StartFile, FinishFile,FinishRank):
 
 def SaveGame(Board, WhoseTurn):
   with open ("C:/Users/milan/OneDrive/Desktop/project euler/Q11/test.csv","w", newline='') as filedata:
-    writer = csv.DictWriter(filedata, skipinitialspace=True, delimiter=',', fieldnames=['0', '1','2','3','4','5','6','7','8']) 
-    for row in Board: 
+    writer = csv.DictWriter(filedata, skipinitialspace=True, delimiter=',', fieldnames=['0', '1','2','3','4','5','6','7','8', '9']) 
+    print('*** Board:',Board)
+    for row in Board:
       newRow = {}
-      for i in range(0,8):
+      for i in range(0,9):
         newRow[str(i)] = row[i]
       writer.writerow(newRow)
     writer.writerow({ '0': WhoseTurn })
 
- 
 
 if __name__ == "__main__":
   Board = CreateBoard() 
@@ -276,26 +274,26 @@ if __name__ == "__main__":
     WhoseTurn = "W"
     GameOver = False
     SampleGame = GetTypeOfGame()
-    InitialiseBoard(Board, SampleGame)
+    initialiseBoard = InitialiseBoard(Board, SampleGame)
     while not(GameOver):
-        DisplayBoard(Board)
+        print('Just before Diaplsy method 2 ----', Board, initialiseBoard)
+        DisplayBoard(initialiseBoard)
         DisplayWhoseTurnItIs(WhoseTurn)
         MoveIsLegal = False
         MoveIsValid = False
         while not(MoveIsValid) or not(MoveIsLegal):#this is looping through move is valid and legal until both conditions are meet
             StartSquare, FinishSquare = GetMove(StartSquare, FinishSquare)
             if StartSquare == -1:
-              print("bord", Board)
-              SaveGame(Board,WhoseTurn)
+              SaveGame(initialiseBoard,WhoseTurn)
             StartRank,StartFile,FinishRank,FinishFile  = GetPositions(StartSquare,FinishSquare)
             print("Checking move is valid...")
             MoveIsValid = CheckMoveIsValid(StartRank, StartFile, FinishFile,FinishRank)
             if MoveIsValid == True:#this is saying that if the move is valid then check if it is legal
-                MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+                MoveIsLegal = CheckMoveIsLegal(initialiseBoard, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
                 if not(MoveIsLegal):
                     print("That is not a legal move - please try again")
-        GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
-        MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+        GameOver = CheckIfGameWillBeWon(initialiseBoard, FinishRank, FinishFile)
+        MakeMove(initialiseBoard, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
         if GameOver:
           DisplayWinner(WhoseTurn)
         if WhoseTurn == "W":
