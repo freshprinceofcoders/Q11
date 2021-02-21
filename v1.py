@@ -161,61 +161,57 @@ def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseT
   return MoveIsLegal
 
 def GetSavedGame():
-  board = []
+  savedGame = []
   with open('C:/Users/milan/OneDrive/Desktop/project euler/Q11/test.csv', newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',')
     for row in spamreader:
       del row[-1]      
-      board.append(row)
-    del board[-1]
-  return board
+      savedGame.append(row)
+  return savedGame
 
 def InitialiseBoard(Board, SampleGame):
-  if SampleGame == "L" or SampleGame == "l":
-    return GetSavedGame()
+  if SampleGame == "Y":
+    for RankNo in range(1, BOARDDIMENSION + 1):
+      for FileNo in range(1, BOARDDIMENSION + 1):#this makes the board for the sample
+        Board[RankNo][FileNo] = "  "
+    Board[1][2] = "BG"
+    Board[1][4] = "BS"
+    Board[1][8] = "WG" # this is settiing out where the piecies start on the board 
+    Board[2][1] = "WR"
+    Board[3][1] = "WS"
+    Board[3][2] = "BE"
+    Board[3][8] = "BE"
+    Board[6][8] = "BR"
   else:
-    if SampleGame == "Y":
-      for RankNo in range(1, BOARDDIMENSION + 1):
-        for FileNo in range(1, BOARDDIMENSION + 1):#this makes the board for the sample
-          Board[RankNo][FileNo] = "  "
-      Board[1][2] = "BG"
-      Board[1][4] = "BS"
-      Board[1][8] = "WG" # this is settiing out where the piecies start on the board 
-      Board[2][1] = "WR"
-      Board[3][1] = "WS"
-      Board[3][2] = "BE"
-      Board[3][8] = "BE"
-      Board[6][8] = "BR"
-    else:
-      for RankNo in range(1, BOARDDIMENSION + 1):
-        for FileNo in range(1, BOARDDIMENSION + 1):
-          if RankNo == 2:
-            Board[RankNo][FileNo] = "BR"
-          elif RankNo == 7:
-            Board[RankNo][FileNo] = "WR"
-          elif RankNo == 1 or RankNo == 8:
+    for RankNo in range(1, BOARDDIMENSION + 1):
+      for FileNo in range(1, BOARDDIMENSION + 1):
+        if RankNo == 2:
+          Board[RankNo][FileNo] = "BR"
+        elif RankNo == 7:
+          Board[RankNo][FileNo] = "WR"
+        elif RankNo == 1 or RankNo == 8:
+          if RankNo == 1:
+            Board[RankNo][FileNo] = "B"
+          if RankNo == 8:
+            Board[RankNo][FileNo] = "W"
+          if FileNo == 1 or FileNo == 8:#This is the cooridinates that needs a letter added to 
+            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "G"#this is adding the "G" to the coordinates on the board and adding the letter G  next to the letter B or W
+          elif FileNo == 2 or FileNo == 7:
+            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "E"
+          elif FileNo == 3 or FileNo == 6:
+            Board[RankNo][FileNo] = Board[RankNo][FileNo] + "N"
+          elif FileNo == 4:# There is one here as there is onlyone position to put it in
             if RankNo == 1:
-              Board[RankNo][FileNo] = "B"
-            if RankNo == 8:
-              Board[RankNo][FileNo] = "W"
-            if FileNo == 1 or FileNo == 8:#This is the cooridinates that needs a letter added to 
-              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "G"#this is adding the "G" to the coordinates on the board and adding the letter G  next to the letter B or W
-            elif FileNo == 2 or FileNo == 7:
-              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "E"
-            elif FileNo == 3 or FileNo == 6:
-              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "N"
-            elif FileNo == 4:# There is one here as there is onlyone position to put it in
-              if RankNo == 1:
-                Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
-              else:
-                Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
-            elif FileNo == 5:
-              if RankNo ==1:#this is black 
-                Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"#this makes it m if it is black 
-              else:
-                Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"#else leaves it
-          else:
-            Board[RankNo][FileNo] = "  "    
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
+            else:
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
+          elif FileNo == 5:
+            if RankNo ==1:#this is black 
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"#this makes it m if it is black 
+            else:
+              Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"#else leaves it
+        else:
+          Board[RankNo][FileNo] = "  "    
   return Board
 
 def GetMove(StartSquare, FinishSquare):
@@ -265,6 +261,17 @@ def SaveGame(Board, WhoseTurn):
     writer.writerow({ '0': WhoseTurn })
 
 
+def GetGameData(Board, GameType, WhoseTurn):
+    if GameType == "L" or GameType == "l":
+      savedGame = GetSavedGame()
+      if savedGame != []:
+        WhoseTurn = savedGame[-1][0]
+        del savedGame[-1]
+        initialiseBoard = savedGame
+    else:
+      initialiseBoard = InitialiseBoard(Board, GameType)
+    return WhoseTurn,initialiseBoard
+
 if __name__ == "__main__":
   Board = CreateBoard() 
   StartSquare = 0 
@@ -273,8 +280,9 @@ if __name__ == "__main__":
   while PlayAgain == "Y":
     WhoseTurn = "W"
     GameOver = False
-    SampleGame = GetTypeOfGame()
-    initialiseBoard = InitialiseBoard(Board, SampleGame)
+    GameType = GetTypeOfGame()
+    savedGame = []
+    WhoseTurn, initialiseBoard = GetGameData( Board, GameType, WhoseTurn)
     while not(GameOver):
         print('Just before Diaplsy method 2 ----', Board, initialiseBoard)
         DisplayBoard(initialiseBoard)
